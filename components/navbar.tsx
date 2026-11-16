@@ -14,6 +14,10 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
+import { signOut, useSession } from "@/lib/auth-client";
+
+
+
 
 const NAV_LINKS = [
   { label: "Browse Jobs", href: "/jobs" },
@@ -23,6 +27,13 @@ const NAV_LINKS = [
 
 export function Navbar() {
   const pathname = usePathname();
+  const {data:session} = useSession()
+
+
+  const handleSignOut = async() =>{
+    await signOut()
+
+  }
 
   return (
     <header className="px-4 pt-8 md:px-10">
@@ -65,7 +76,20 @@ export function Navbar() {
 
           {/* Buttons */}
           <div className="flex items-center gap-4">
-            <Link href="/login">
+             { session?.user ? 
+             <>
+              <span className="text-[#EDEDEF]">Welcome {session.user.name}</span>
+              <Button
+              onClick={handleSignOut}
+                variant="ghost"
+                className="text-sm font-semibold text-[#645bff] hover:bg-transparent hover:text-[#7a72ff]"
+              >
+                Sign Out
+              </Button>
+             </>
+             : 
+             <>
+            <Link href="/auth/sign-in">
               <Button
                 variant="ghost"
                 className="text-sm font-semibold text-[#645bff] hover:bg-transparent hover:text-[#7a72ff]"
@@ -74,11 +98,13 @@ export function Navbar() {
               </Button>
             </Link>
 
-            <Link href="/signup">
+            <Link href="/auth/sign-up">
               <Button className="rounded-lg bg-[#5c53fe] px-4 text-sm text-white shadow-[0_2px_10px_rgba(92,83,254,0.3)] hover:bg-[#6f67ff]">
                 Get Started
               </Button>
+              
             </Link>
+            </>}
           </div>
         </div>
 
@@ -134,14 +160,14 @@ export function Navbar() {
               <div className="flex flex-col gap-3">
                 <SheetClose
                   nativeButton={false}
-                  render={<Link href="/login" />}
+                  render={<Link href="/auth/sign-in" />}
                 >
                   Sign In
                 </SheetClose>
 
                 <SheetClose
                   nativeButton={false}
-                  render={<Link href="/signup" />}
+                  render={<Link href="/auth/sign-up" />}
                 >
                   <Button className="w-full bg-[#5c53fe] text-white hover:bg-[#6f67ff]">
                     Get Started
